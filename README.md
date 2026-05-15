@@ -28,7 +28,7 @@ Cloud consoles are already vulnerable to insider threats. A malicious or comprom
 
 **Agentic AI multiplies that risk.**
 
-An agent with misconfigured permissions or a compromised identity can make those same changes faster, at scale, and without a human approving each action. Worse, most enterprise agent platforms — including Google's Gemini Enterprise — lock audit trails inside the platform. Viewing them externally requires building a custom MCP server and a dedicated agent. That's not governance. That's a workaround.
+An agent with misconfigured permissions or a compromised identity can make those same changes faster, at scale, and without a human approving each action. Worse, most enterprise agent platforms — including major enterprise platforms — lock audit trails inside the platform. Viewing them externally requires building a custom MCP server and a dedicated agent. That's not governance. That's a workaround.
 
 TrailStax is built on a different premise:
 
