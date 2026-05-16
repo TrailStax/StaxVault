@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: trailstax
+Version: 0.1.0
+Summary: Tamper-proof, append-only audit trails and code commit registry for AI agents. First implementation of the RealAgentID protocol.
+Home-page: https://github.com/TrailStax/trailstax
+Author: CrossroadCode
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Security
+Classifier: Topic :: Software Development :: Libraries
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.10
+Requires-Python: >=3.10

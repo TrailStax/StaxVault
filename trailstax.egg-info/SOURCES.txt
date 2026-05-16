@@ -1,0 +1,9 @@
+README.md
+setup.py
+trailstax/__init__.py
+trailstax/codebank.py
+trailstax/trail.py
+trailstax.egg-info/PKG-INFO
+trailstax.egg-info/SOURCES.txt
+trailstax.egg-info/dependency_links.txt
+trailstax.egg-info/top_level.txt
