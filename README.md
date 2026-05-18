@@ -136,7 +136,7 @@ bank.export("codebank.json")
 ## Quickstart
 
 ```bash
-git clone https://github.com/TrailStax/trailstax.git
+git clone https://github.com/TrailStax/StaxVault.git
 cd trailstax
 pip install -e .
 python demo.py
@@ -163,13 +163,13 @@ Full control mapping in [`COMPLIANCE.md`](COMPLIANCE.md).
 
 | Phase | Feature | Status |
 |---|---|---|
-| v0.1 | `trail.py` — hash-chained action audit log | ✅ Alpha |
-| v0.2 | `codebank.py` — hash-chained code commit registry | 🔨 In Progress |
-| v0.3 | `tests/` — pytest suite, chain integrity + tamper cases | 🔜 |
-| v0.4 | Redis backend — live agent session streaming | 🔜 |
-| v0.5 | `sign.py` — RealAgentID keypair signing of trail + code commits | 🔜 |
-| v0.6 | Multi-agent session merging + cross-agent audit | 🔜 |
-| v1.0 | Full COMPLIANCE.md + NIST AI RMF alignment | 🔜 |
+| v0.1 | `trail.py` — hash-chained action audit log | Alpha |
+| v0.2 | `codebank.py` — hash-chained code commit registry | Alpha|
+| v0.3 | `tests/` — pytest suite, chain integrity + tamper cases | Alpha |
+| v0.4 | Redis backend — live agent session streaming | In Progress |
+| v0.5 | `sign.py` — RealAgentID keypair signing of trail + code commits | Alpha |
+| v0.6 | Multi-agent session merging + cross-agent audit | In Progress |
+| v1.0 | Full COMPLIANCE.md + NIST AI RMF alignment | Alpha |
 
 ---
 
