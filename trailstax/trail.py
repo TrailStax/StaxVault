@@ -30,8 +30,11 @@ class TrailEntry:
     timestamp:  float
     session_id: str
     sequence:   int
-    prev_hash:  str
-    entry_hash: str = field(default="", init=False)
+    prev_hash:          str
+    method_declared:    list = field(default_factory=list)
+    artifacts_accessed: list = field(default_factory=list)
+    scope_violation:    bool = False
+    entry_hash:         str = field(default="", init=False)
 
     def __post_init__(self):
         self.entry_hash = self._compute_hash()
@@ -45,7 +48,10 @@ class TrailEntry:
             "timestamp":  self.timestamp,
             "session_id": self.session_id,
             "sequence":   self.sequence,
-            "prev_hash":  self.prev_hash,
+            "prev_hash":          self.prev_hash,
+            "method_declared":    self.method_declared,
+            "artifacts_accessed": self.artifacts_accessed,
+            "scope_violation":    self.scope_violation,
         }
         raw = json.dumps(data, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(raw.encode()).hexdigest()
@@ -83,23 +89,54 @@ class TrailStax:
         self.entries:   list[TrailEntry] = []
         self._sequence  = 0
         self._last_hash = self.GENESIS_HASH
+    SCOPE_POLICIES = {
+        "feature_reimplementation": ["src/", "tests/"],
+        "iam_check":                ["iam/", "policies/"],
+        "firewall_query":           ["firewall/", "rules/"],
+        "recon":                    ["targets/", "reports/"],
+    }
 
-    def log(self, action: str, payload: Optional[dict] = None) -> TrailEntry:
+    def check_scope(self, task_type: str, artifacts_accessed: list) -> bool:
+        """Returns True if any accessed artifact is outside allowed scope."""
+        allowed = self.SCOPE_POLICIES.get(task_type, [])
+        if not allowed:
+            return False
+        for artifact in artifacts_accessed:
+            if not any(artifact.startswith(a) for a in allowed):
+                return True
+        return False
+
+    def log(self, action: str, payload: Optional[dict] = None,
+            method_declared: list = None,
+            artifacts_accessed: list = None,
+            task_type: str = None) -> TrailEntry:
         """Append a new entry to the trail."""
+        method_declared    = method_declared or []
+        artifacts_accessed = artifacts_accessed or []
+        violation = self.check_scope(task_type, artifacts_accessed) if task_type else False
+
         entry = TrailEntry(
-            entry_id=   str(uuid.uuid4()),
-            agent_id=   self.agent_id,
-            action=     action,
-            payload=    payload or {},
-            timestamp=  time.time(),
-            session_id= self.session_id,
-            sequence=   self._sequence,
-            prev_hash=  self._last_hash,
+            entry_id=           str(uuid.uuid4()),
+            agent_id=           self.agent_id,
+            action=             action,
+            payload=            payload or {},
+            timestamp=          time.time(),
+            session_id=         self.session_id,
+            sequence=           self._sequence,
+            prev_hash=          self._last_hash,
+            method_declared=    method_declared,
+            artifacts_accessed= artifacts_accessed,
+            scope_violation=    violation,
         )
         self.entries.append(entry)
         self._last_hash = entry.entry_hash
         self._sequence += 1
+
+        if violation:
+            print(f"[TrailStax] WARNING: SCOPE VIOLATION - agent={self.agent_id} task={task_type}")
+
         return entry
+
 
     def verify_chain(self) -> bool:
         """
@@ -117,12 +154,15 @@ class TrailStax:
         return True
 
     def audit_report(self) -> dict:
+        violations = [e.to_dict() for e in self.entries if e.scope_violation]
         return {
-            "trailstax_version": TRAILSTAX_VERSION,
+            "trailstax_version":  TRAILSTAX_VERSION,
             "session_id":        self.session_id,
             "agent_id":          self.agent_id,
             "total_entries":     len(self.entries),
-            "chain_valid":       self.verify_chain(),
+            "chain_valid":        self.verify_chain(),
+            "scope_violations":   len(violations),
+            "violation_entries":  violations,
             "genesis_hash":      self.GENESIS_HASH,
             "tail_hash":         self._last_hash,
             "entries":           [e.to_dict() for e in self.entries],
