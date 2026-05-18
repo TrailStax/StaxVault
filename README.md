@@ -46,6 +46,7 @@ TrailStax is built on a different premise:
 | Agent silently changes IAM / firewall rules | trail.py logs every action with full payload, tamper-proof |
 | Platform holds audit data hostage | JSON export runs anywhere — no vendor required |
 | Replay attack on agent identity | RealAgentID TTL enforcement blocks stale credentials |
+| Agent reward hacking — solves task via unintended artifact access | trail.py scope policies flag out-of-scope access before commit; violation locked into hash chain |
 
 ---
 
@@ -98,13 +99,23 @@ from trailstax import TrailStax
 
 trail = TrailStax(agent_id="recon-agent-001")
 
-trail.log("session.start",    {"target": "example.com", "mode": "passive"})
-trail.log("iam.role_check",   {"role": "storage.admin", "granted": True})
-trail.log("firewall.query",   {"rule": "allow-all-ingress", "found": True})
-trail.log("recon.port_scan",  {"ports_checked": [80, 443], "open": [443]})
-trail.log("session.complete", {"duration_ms": 2140, "findings": 2})
+trail.log("session.start", {"target": "example.com", "mode": "passive"})
 
-print(trail.verify_chain())   # True — untampered
+# Method attestation — declare how the task was done and what was accessed
+trail.log(
+    "feature.reimplement",
+    payload={"status": "complete"},
+    method_declared=["read_spec", "write_code", "run_tests"],
+    artifacts_accessed=["src/feature.py", "tests/test_feature.py"],
+    task_type="feature_reimplementation"
+)
+
+# Scope violation fires automatically if agent accesses out-of-bounds artifacts
+# [TrailStax] WARNING: SCOPE VIOLATION - agent=... task=feature_reimplementation
+
+print(trail.verify_chain())     # True — chain intact, violation locked in
+report = trail.audit_report()
+print(report["scope_violations"])  # 1
 trail.export("session_trail.json")
 ```
 
@@ -166,6 +177,7 @@ Full control mapping in [`COMPLIANCE.md`](COMPLIANCE.md).
 | v0.1 | `trail.py` — hash-chained action audit log | Alpha |
 | v0.2 | `codebank.py` — hash-chained code commit registry | Alpha|
 | v0.3 | `tests/` — pytest suite, chain integrity + tamper cases | Alpha |
+| v0.3.5 | Method attestation + scope enforcement in `trail.py` | ✅ Shipped |
 | v0.4 | Redis backend — live agent session streaming | In Progress |
 | v0.5 | `sign.py` — RealAgentID keypair signing of trail + code commits | Alpha |
 | v0.6 | Multi-agent session merging + cross-agent audit | In Progress |
@@ -180,6 +192,15 @@ Full control mapping in [`COMPLIANCE.md`](COMPLIANCE.md).
 | Protocol | [RealAgentID](https://github.com/wishuponascar22/RealAgentID) | Who is this agent? |
 | Implementation | TrailStax | What did it do? What code did it run? |
 | Combined | Both | Can this agent's actions be trusted end-to-end? |
+
+The four trust layers:
+
+| Layer | Mechanism | Question Answered |
+|---|---|---|
+| Identity | RealAgentID keypair | Who is this agent? |
+| Action | `trail.py` hash chain | What did it do? |
+| Method | Attestation fields + scope policies | How did it do it? |
+| Reasoning | `reasoning.py` (roadmap) | Did it reason legitimately? |
 
 TrailStax is the first production implementation of the RealAgentID protocol. When `sign.py` lands in v0.5, every trail entry and code commit will carry a RealAgentID keypair signature — binding identity to action to code in a single verifiable artifact.
 
