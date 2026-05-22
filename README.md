@@ -7,7 +7,9 @@
 [![RealAgentID](https://img.shields.io/badge/RealAgentID-v0.1-00e5a0.svg)](https://github.com/wishuponascar22/RealAgentID)
 [![Status: Alpha](https://img.shields.io/badge/status-alpha-orange.svg)](https://github.com/TrailStax/StaxVault)
 [![OWASP Agentic](https://img.shields.io/badge/OWASP-Agentic%20Top%2010-red.svg)](docs/TrailStax_OWASP_Gap_Analysis.docx)
-
+[![SBOM](https://img.shields.io/badge/SBOM-CycloneDX-blue)]
+[![SLSA](https://img.shields.io/badge/SLSA-Level%202-green)]
+[![CVE Scan](https://github.com/TrailStax/StaxVault/actions/workflows/sbom.yml/badge.svg)]
 -----
 
 ## What TrailStax Is
