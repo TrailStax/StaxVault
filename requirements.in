@@ -1,0 +1,17 @@
+# TrailStax direct dependencies
+# Generate from pip freeze 2026-05-21
+# Edit this file, not requirements.txt
+
+certifi
+charset-normalizer
+idna
+lxml
+neo4j
+pypdf
+python-docx
+pytz
+PyYAML
+redis
+requests
+typing_extensions
+urllib3
