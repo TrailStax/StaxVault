@@ -1,0 +1,46 @@
+name: SBOM Generation
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt --require-hashes
+          pip install cyclonedx-bom pip-audit
+
+      - name: Generate SBOM
+        run: |
+          python -m cyclonedx_py environment -o sbom/latest.cdx.json --of JSON
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trailstax-sbom-${{ github.sha }}
+          path: sbom/latest.cdx.json
+          retention-days: 90
+
+      - name: CVE Scan
+        run: |
+          python -m pip_audit -r requirements.txt --output json -o audit.json
+
+      - name: Upload audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trailstax-audit-${{ github.sha }}
+          path: audit.json
+          retention-days: 30
