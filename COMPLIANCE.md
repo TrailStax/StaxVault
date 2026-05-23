@@ -18,3 +18,14 @@
 | ASI08 | Cascading Failures | Partial | trail.py tracing; circuit breaker planned |
 | ASI09 | Insecure Output Handling | Partial | codebank.py; downstream validation planned |
 | ASI10 | Shared Resource Abuse | Partial | Redis controlled via RealAgentID signatures |
+
+## Cross-System Authorization Invariant
+
+A valid section must satisfy three independent conditions:
+
+1. Keypair Authenticity (RealAgentID) - the agent is who it claims to be
+2. Scope-Gate Binding (RealAgentID) - the credential is valid for this gate and task
+3. Blueprint Provenance Integrity (Ira) - the artifact being acted on matches its TrailStax-committed hash
+
+Satisfaction of any one or two conditions does not constitute authorizatiion.
+This invariant applis across RealAgentID, TrailStax, and Ira-Digital-Blueprints.
