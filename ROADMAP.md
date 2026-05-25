@@ -113,6 +113,16 @@ enforced at the gate level, not by policy.
 - TTL-bound decryption keys - expire with agent session
 - Only verified agents with correct lineage can decrypt
 - Data unreadable without re-verification after TTL expiry
+
+**Then - CrossroadCode PublishAgent**
+- RealAgentID registered agent with read-only tool scope
+- Monitors repos for commits, releases, and milestones
+- Monitors intelligence pipeline for CVEs and research
+- Generates platform-appropriate posts per event
+- Platforms: BlueSky (atproto), LinkedIn, GitHub, HuggingFace
+- Every post logged to TrailStax with content, platform, timestamp, and triggering event
+- Denied tools: repo_write, code_execute, file_modify
+- Permitted tools: bluesky_post, linkedin_post, github_discussion, huggingface_post
 ---
 
 ## Architectural Invariant
