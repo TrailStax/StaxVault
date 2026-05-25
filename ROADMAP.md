@@ -100,6 +100,19 @@ enforced at the gate level, not by policy.
 - Neo4j as query surface across reasoning,
   lineage, and audit data simultaneously
 
+**Then - Sandboxed Execution Environments**
+- Isolated execution context for restricted sensitivity agents
+- Separate process per restricted agent session
+- Output inspection before sandbox exits
+- TrailStax logs full sandbox lifecycle
+- No shared memory with other agent processes
+
+**Then - Encrypted Data at Rest**
+- Encryption at rest for training datasets, model weights, private keys
+- RealAgentID identity-bound key management
+- TTL-bound decryption keys - expire with agent session
+- Only verified agents with correct lineage can decrypt
+- Data unreadable without re-verification after TTL expiry
 ---
 
 ## Architectural Invariant
