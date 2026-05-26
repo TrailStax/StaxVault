@@ -93,3 +93,8 @@ See ROADMAP.md for implementation schedule:
 - Federated root scope enforcement
 - Neo4j behavioral anomaly graph queries
 - HSM integration for vault key management
+
+**Addressed - Global Rate Limiting**
+Global lockdown mode implemented in ragid_gate.
+Detects coordinated multi-agent flood attacks.
+1000 requests per 60 second window triggers 5 minute lockdown across all agents.
